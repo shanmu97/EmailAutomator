@@ -81,13 +81,54 @@ const handleSetContent = (title) => {
     localStorage.setItem("savedTitles", JSON.stringify(updatedTitles));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // handle form submission logic here
-    console.log("Emails:", emails);
-    console.log("Subject:", subject);
-    console.log("Files:", files);
+  
+    // Basic validation
+    if (!emails.length) {
+      alert("Please add at least one recipient email.");
+      return;
+    }
+    if (!subject.trim()) {
+      alert("Please enter a subject.");
+      return;
+    }
+    if (!editorContent || editorContent === "<p>Start typing...</p>") {
+      alert("Please enter email content.");
+      return;
+    }
+  
+    const formData = new FormData();
+    formData.append("emails", emails.join(","));
+    formData.append("subject", subject);
+    formData.append("text", editorContent);
+  
+    files.forEach((file) => {
+      formData.append("attachments", file);
+    });
+  
+    try {
+      const response = await fetch("https://emailautomator.onrender.com/api/email/send", {
+        method: "POST",
+        body: formData,
+      });
+  
+      const data = await response.json();
+      if (data.success) {
+        alert("Email sent successfully!");
+        // Optionally reset form:
+        setEmails([]);
+        setSubject("");
+        setFiles([]);
+        setEditorContent("<p>Start typing...</p>");
+      } else {
+        alert("Failed to send email: " + data.message);
+      }
+    } catch (error) {
+      alert("Error sending email: " + error.message);
+    }
   };
+  
 
   return (
     <div style={{ padding: "20px" }}>

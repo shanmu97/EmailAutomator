@@ -1,5 +1,6 @@
 const nodemailer = require('nodemailer');
 const path = require('path');
+const { htmlToText } = require('html-to-text'); // Import the module
 
 const uploadFile = async (req, res) => {
   let { emails, subject, text } = req.body;
@@ -11,6 +12,9 @@ const uploadFile = async (req, res) => {
   } else if (!Array.isArray(emails)) {
     emails = [emails].filter(Boolean);
   }
+
+  // Convert HTML content to plain text
+  const plainText = htmlToText(text || '', { wordwrap: 130 });
 
   let transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -29,7 +33,8 @@ const uploadFile = async (req, res) => {
     from: process.env.EMAIL_USER,
     to: emails.join(','),
     subject: subject,
-    text: text || '',
+    text: plainText,      // Plain text version
+    html: text,           // Original HTML (optional, but recommended)
     attachments: attachments
   };
 
