@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+.tiptap-editor {
+    min-height: 350px;
+    padding: 12px;
+    /* Optional: make it scrollable if content exceeds 100 lines */
+    overflow-y: auto;
+  }
+  
