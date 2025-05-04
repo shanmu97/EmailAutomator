@@ -52,6 +52,7 @@ const handleSetContent = (title) => {
   const savedContent = JSON.parse(localStorage.getItem("savedContent")) || {};
   const contentToAppend = savedContent[title] || "";
   // Append to current editor content
+  setSubject(title)
   setEditorContent((prevContent) => {
     // Remove trailing </p> from prevContent and leading <p> from contentToAppend if needed
     // to avoid broken HTML structure.
